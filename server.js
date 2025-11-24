@@ -13,7 +13,7 @@ app.use(express.static("public"));
 let localModel;
 (async () => {
   console.log("Loading model from HuggingFace...");
-  localModel = await pipeline("text-generation", "Xenova/gpt2");
+  localModel = await pipeline("text-generation", "Qwen/Qwen2.5-0.5B");
   console.log("Model loaded successfully!");
 })();
 
