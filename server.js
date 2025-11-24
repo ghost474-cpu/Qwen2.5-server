@@ -1,5 +1,4 @@
 import express from 'express';
-import path from 'path';
 import { pipeline } from '@xenova/transformers';
 import bodyParser from 'body-parser';
 
@@ -7,26 +6,27 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(process.cwd(), 'public'))); // الملفات الثابتة
+app.use(express.static("public"));
 
-// تحميل النموذج عند بدء السيرفر
+// تحميل النموذج مباشرة من HuggingFace
 let localModel;
 (async () => {
-  console.log("Loading local model...");
-  localModel = await pipeline("text-generation", path.join(process.cwd(), "models", "small-model"));
-  console.log("Local model loaded.");
+  console.log("Loading model from HuggingFace...");
+  localModel = await pipeline("text-generation", "Qwen/Qwen2-0.5B");
+  console.log("Model loaded successfully!");
 })();
 
-// API endpoint لتوليد النصوص
+// API endpoint
 app.post("/api/chat", async (req, res) => {
   const { message } = req.body;
   if (!localModel) return res.status(503).json({ error: "Model is still loading." });
 
   try {
-    const output = await localModel(message);
+    const output = await localModel(message, { max_length: 100 });
     res.json({ response: output[0].generated_text });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: "Model error." });
   }
 });
 
