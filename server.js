@@ -1,6 +1,7 @@
 import express from 'express';
-import { pipeline } from '@xenova/transformers';
 import bodyParser from 'body-parser';
+import pkg from '@xenova/transformers'; // استيراد كامل المكتبة
+const { pipeline } = pkg; // استخراج pipeline من default export
 
 const app = express();
 const PORT = process.env.PORT || 3000;
